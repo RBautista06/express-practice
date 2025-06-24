@@ -27,9 +27,22 @@ const mockUsers = [
   },
 ];
 
+const resolveUserUserById = (req, res, next) => {
+  const {
+    params: { id },
+  } = req;
+  const parsedId = parseInt(id);
+  if (isNaN(parsedId)) return res.sendStatus(400);
+  const findUserIndex = mockUsers.findIndex((user) => user.id === parsedId);
+  if (findUserIndex === -1) return res.sendStatus(404);
+  req.findUserIndex = findUserIndex; ///this asiggns the findUserIndex to a request body
+  next();
+};
+
 app.get("/", (req, res) => {
   res.send("Home").status(200);
 });
+
 app.get("/api/users", (req, res) => {
   // destrucutre query parameters
   const {
@@ -53,9 +66,28 @@ app.post("/api/users", (req, res) => {
   return res.sendStatus(201).send(newUser);
 });
 ///UPDATE BUT IN BATCH
-app.put("/api/users/:id", (req,res)=>{
-  
-})
+app.put("/api/users/:id", resolveUserUserById, (req, res) => {
+  const { body, findUserIndex } = req;
+  mockUsers[findUserIndex] = {
+    id: mockUsers[findUserIndex].id,
+    ...body,
+  };
+  return res.send(mockUsers[findUserIndex]).status(200);
+});
+// UPDATE THE OBJECT BUT IN ONLY SPECIFIC OBJECT KEYS
+app.patch("/api/users/:id", resolveUserUserById, (req, res) => {
+  const { body, findUserIndex } = req;
+  mockUsers[findUserIndex] = { ...mockUsers[findUserIndex], ...body };
+  return res.send(mockUsers[findUserIndex]).status(200);
+});
+///DELETE REQUEST
+app.delete("/api/users/:id", resolveUserUserById, (req, res) => {
+  const { findUserIndex } = req;
+  if (findUserIndex === -1) return res.sendStatus(404);
+  mockUsers.splice(findUserIndex, 1);
+  return res.send(200);
+});
+// fetch the data using params
 app.get("/api/users/:id", (req, res) => {
   const parsedId = parseInt(req.params.id);
   if (isNaN(parsedId)) return res.status(400).send("Bad Request. Invalid ID");
