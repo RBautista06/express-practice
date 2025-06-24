@@ -1,4 +1,5 @@
 import express from "express";
+import { query } from "express-validator";
 
 const app = express();
 //convert body to json
