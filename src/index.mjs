@@ -88,10 +88,9 @@ app.delete("/api/users/:id", resolveUserUserById, (req, res) => {
   return res.send(200);
 });
 // fetch the data using params
-app.get("/api/users/:id", (req, res) => {
-  const parsedId = parseInt(req.params.id);
-  if (isNaN(parsedId)) return res.status(400).send("Bad Request. Invalid ID");
-  const findUser = mockUsers.find((user) => user.id === parsedId);
+app.get("/api/users/:id", resolveUserUserById, (req, res) => {
+  const { findUserIndex } = req;
+  const findUser = mockUsers[findUserIndex];
   if (!findUser) return res.sendStatus(404);
   return res.send(findUser);
 });
