@@ -12,6 +12,7 @@ import {
 import { mockUsers } from "../utils/mockData.mjs";
 import { resolveUserUserById } from "../utils/middleware.mjs";
 import { User } from "../mongoose/schemas/user.mjs";
+import { hashPassword } from "../utils/helpers.mjs";
 
 const router = Router();
 
@@ -54,6 +55,8 @@ router.post(
     if (!result.isEmpty())
       return res.status(400).send({ errors: result.array() });
     const data = matchedData(req);
+    console.log(data);
+    data.password = hashPassword(data.password);
     console.log(data);
     const newUser = new User(data);
     try {
