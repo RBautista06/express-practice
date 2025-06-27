@@ -13,6 +13,7 @@ import { mockUsers } from "../utils/mockData.mjs";
 import { resolveUserUserById } from "../utils/middleware.mjs";
 import { User } from "../mongoose/schemas/user.mjs";
 import { hashPassword } from "../utils/helpers.mjs";
+import { createUserHandler, getUserIdHandler } from "../handlers/user.mjs";
 
 const router = Router();
 
@@ -54,23 +55,7 @@ router.get(
 router.post(
   "/api/users",
   checkSchema(checkUserValidationSchema),
-  async (req, res) => {
-    const result = validationResult(req);
-    if (!result.isEmpty())
-      return res.status(400).send({ errors: result.array() });
-    const data = matchedData(req);
-    console.log(data);
-    data.password = hashPassword(data.password);
-    console.log(data);
-    const newUser = new User(data);
-    try {
-      const saveUser = await newUser.save();
-      return res.status(201).send(saveUser);
-    } catch (err) {
-      console.log(err);
-      return res.sendStatus(400);
-    }
-  }
+  createUserHandler
 );
 ///UPDATE BUT IN BATCH
 router.put(
@@ -113,13 +98,5 @@ router.delete("/api/users/:id", resolveUserUserById, (req, res) => {
   return res.send(200);
 });
 // fetch the data using params
-router.get("/api/users/:id", resolveUserUserById, (req, res) => {
-  const { findUserIndex } = req;
-  const findUser = mockUsers[findUserIndex];
-  if (!findUser) return res.sendStatus(404);
-  return res.send(findUser);
-});
+router.get("/api/users/:id", resolveUserUserById, getUserIdHandler);
 export default router;
-
-
-
