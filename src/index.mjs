@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import session from "express-session";
 import passport from "passport";
 import mongoose from "mongoose";
+import MongoStore from "connect-mongo";
 
 import "./strategies/local-strategy.mjs";
 
@@ -25,6 +26,9 @@ app.use(
     cookie: {
       maxAge: 60000 * 60, // Sets how long the cookie (session) lasts in the browser — here it's 1 hour (60000 ms * 60)
     },
+    store: MongoStore.create({
+      client: mongoose.connection.getClient(),
+    }),
   })
 );
 app.use(passport.initialize()); // 🔐 This sets up Passport — it gets ready to handle login/authentication.
@@ -47,6 +51,7 @@ app.get("/api/auth/status", (req, res) => {
   console.log(`Inside Auth Status`);
   console.log(req.user);
   console.log(req.session);
+  console.log(req.sessionID);
   return req.user ? res.send(req.user) : res.sendStatus(401);
 });
 

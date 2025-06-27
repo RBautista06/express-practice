@@ -25,7 +25,7 @@ router.get(
     .withMessage("must not Empty")
     .isLength({ min: 3, max: 10 })
     .withMessage("must be 3 to 10 characters"),
-  (req, res) => {
+  async (req, res) => {
     console.log(req.session.id);
     req.sessionStore.get(req.session.id, (err, sessionData) => {
       if (err) {
@@ -34,16 +34,20 @@ router.get(
       }
       console.log(sessionData);
     });
-    const result = validationResult(req);
     // destrucutre query parameters
     const {
       query: { filter, value },
     } = req;
-    // if filter and value is undefined
-    if (filter && value) {
-      return res.send(mockUsers.filter((user) => user[filter].includes(value)));
+    try {
+      const users = await User.find({});
+      if (filter && value) {
+        return res.send(users.filter((user) => user[filter].includes(value)));
+      }
+      return res.send(users);
+    } catch (err) {
+      console.log(err);
     }
-    return res.send(mockUsers);
+    // if filter and value is undefined
   }
 );
 ////INSERT
