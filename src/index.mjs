@@ -3,9 +3,16 @@ import router from "./routes/index.mjs";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import passport from "passport";
+import mongoose from "mongoose";
+
 import "./strategies/local-strategy.mjs";
 
 const app = express();
+
+mongoose
+  .connect("mongodb://localhost/express-practice")
+  .then(() => console.log("connected to database"))
+  .catch((err) => console.log(`Error ${err}`));
 
 //convert body to json
 app.use(express.json());
