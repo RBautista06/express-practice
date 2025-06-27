@@ -11,6 +11,8 @@ import {
 } from "../utils/validationSchemas.mjs";
 import { mockUsers } from "../utils/mockData.mjs";
 import { resolveUserUserById } from "../utils/middleware.mjs";
+import { User } from "../mongoose/schemas/user.mjs";
+
 const router = Router();
 
 //FETCH
@@ -25,12 +27,12 @@ router.get(
   (req, res) => {
     console.log(req.session.id);
     req.sessionStore.get(req.session.id, (err, sessionData) => {
-      if(err){
+      if (err) {
         console.log(err);
-        throw err
+        throw err;
       }
       console.log(sessionData);
-    })
+    });
     const result = validationResult(req);
     // destrucutre query parameters
     const {
@@ -47,17 +49,20 @@ router.get(
 router.post(
   "/api/users",
   checkSchema(checkUserValidationSchema),
-  (req, res) => {
-    const result = validationResult(req); //checks if there is any validaiton errors
+  async (req, res) => {
+    const result = validationResult(req);
     if (!result.isEmpty())
       return res.status(400).send({ errors: result.array() });
-    const data = matchedData(req); // this will extract the validated fields from request
-    const newUser = {
-      id: mockUsers[mockUsers.length - 1].id + 1,
-      ...data,
-    };
-    mockUsers.push(newUser);
-    return res.status(201).send(newUser);
+    const data = matchedData(req);
+    console.log(data);
+    const newUser = new User(data);
+    try {
+      const saveUser = await newUser.save();
+      return res.status(201).send(saveUser);
+    } catch (err) {
+      console.log(err);
+      return res.sendStatus(400);
+    }
   }
 );
 ///UPDATE BUT IN BATCH

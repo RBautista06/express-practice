@@ -28,6 +28,9 @@ export const checkUserValidationSchema = {
         "Must be minimun of 5 characters and maximum of 32 characters",
     },
   },
+  password: {
+    notEmpty: true,
+  },
 };
 export const patchUserSchema = {
   username: {
