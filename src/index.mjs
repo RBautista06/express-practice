@@ -8,6 +8,7 @@ import session from "express-session";
 import passport from "passport";
 import mongoose from "mongoose";
 import MongoStore from "connect-mongo";
+import "./strategies/discord-strategy.mjs";
 
 // import "./strategies/local-strategy.mjs";
 
@@ -65,6 +66,17 @@ app.post("/api/auth/logout", (req, res) => {
     return res.sendStatus(200);
   });
 });
+
+app.get("/api/auth/discord", passport.authenticate("discord"));
+app.get(
+  "/api/auth/redirect/discord",
+  passport.authenticate("discord"),
+  (req, res) => {
+    console.log(req.session);
+    console.log(req.user);
+    res.sendStatus(200);
+  }
+);
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, (req, res) => {
   console.log(`Running on Port ${PORT}`);
