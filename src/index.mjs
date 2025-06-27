@@ -1,3 +1,6 @@
+// client ID: 1388202977600213012
+// client secret: 0qqATUu3MC7SqGLTW0Iko8uifVPGHBRO
+
 import express from "express";
 import router from "./routes/index.mjs";
 import cookieParser from "cookie-parser";
@@ -6,7 +9,7 @@ import passport from "passport";
 import mongoose from "mongoose";
 import MongoStore from "connect-mongo";
 
-import "./strategies/local-strategy.mjs";
+// import "./strategies/local-strategy.mjs";
 
 const app = express();
 
