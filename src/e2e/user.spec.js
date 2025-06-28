@@ -36,6 +36,8 @@ describe("create user long in", () => {
           .set("Cookie", res.headers["set-cookie"]); // this is to pass the cookie to api auth status
       });
     expect(response.statusCode).toBe(200);
+    expect(response.body.username).toBe("railley123");
+    expect(response.body.displayName).toBe("player_01");
     // expect(response.headers["set-cookie"]).toBeDefined();
   });
   // it("should visit /api/auth/status and return the authenticated user", async () => {
